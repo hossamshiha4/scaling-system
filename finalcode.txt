@@ -1,0 +1,235 @@
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+#include <stdlib.h>
+#include <windows.h>
+#include <math.h>
+#include <iostream>
+#include <windows.h>
+#include <GL/glut.h>
+#include <stdlib.h>
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+#include "GL/glu.h"
+
+#include <string>
+
+float angle=1.0;
+double yRotated = 0;
+double zRotated = 0;
+double xRotated = 0;
+int movex1=0,movey1=0;
+int movex2=0,movey2=0;
+double translateP=0;
+double translateH=0;
+
+
+void reshapeFunc (int w, int h)
+{
+    glViewport(0,0,(GLsizei)w,(GLsizei)h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective (70.0, (GLdouble)w / (GLdouble)h, 1, 40.0);//gluPerspective for 3D Perspective Projection
+    glMatrixMode(GL_MODELVIEW);
+}
+
+void Player (int x, int y, int z, int tx, int ty)
+{
+    glTranslatef    (x+tx, y+ty, z);
+
+     glPushMatrix ();
+       glTranslatef    (1.5, 0.0, 0.0);
+       glRotatef       (180.0, 1,0,0);
+       glRotatef       (zRotated, 0,0,1);
+       glutSolidSphere (1.0, 5, 30);
+    glPopMatrix ();
+}
+
+void addCoins (int x, int y, int z){//This method adds coins
+    glutSolidTorus(x, y, z, 50);//coins items for players to pick up are made using torus shape
+}
+void Pyramid(int x, int y, int z){//Drawing pyramid manually from scratch using GL_TRIANGLES
+
+    glRotatef(45, 1, 0, 0);
+    glTranslated(x, y, z);
+    glRotated(yRotated, 0, 1, 0);
+    glColor3f(1.0, 1.0, 1.0);
+    glBegin(GL_TRIANGLES);
+
+      glVertex3f( 0.0f, 1.0f+translateP, 0.0f);
+      glVertex3f(-1.0f, -1.0f+translateP, 1.0f);
+      glVertex3f(1.0f, -1.0f+translateP, 1.0f);
+
+      glVertex3f(0.0f, 1.0f+translateP, 0.0f);
+      glVertex3f(1.0f, -1.0f+translateP, 1.0f);
+      glVertex3f(1.0f, -1.0f+translateP, -1.0f);
+
+      glVertex3f( 0.0f, 1.0f+translateP, 0.0f);
+      glVertex3f(1.0f, -1.0f+translateP, -1.0f);
+      glVertex3f(-1.0f, -1.0f+translateP, -1.0f);
+
+      glVertex3f(0.0f, 1.0f+translateP, 0.0f);
+      glVertex3f(-1.0f, -1.0f+translateP, -1.0f);
+      glVertex3f(-1.0f, -1.0f+translateP, 1.0f);
+   glEnd();
+
+   glBegin(GL_POLYGON);
+      glVertex3f(-1.0f, -1.0f+translateP, 1.0f);
+      glVertex3f(-1.0f, -1.0f+translateP, -1.0f);
+      glVertex3f(1.0f, -1.0f+translateP, -1.0f);
+      glVertex3f(1.0f, -1.0f+translateP, 1.0f);
+    glEnd();
+
+}
+
+
+
+
+void display (void){//General display method where everything is called to display in the scene
+
+   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity ();
+    glTranslatef    (0.0, 0.0, -15.0);
+
+    glRotated(-20, 0, 1, 0);
+    glRotated(-80, 0, 0, 1);
+    glRotated(-20, 1, 0, 0);
+    glRotated(80, 0, 0, 1);
+
+    glBegin(GL_POLYGON);
+    glColor3f(0,0.0, 0.0);
+    glVertex3f( 5.0, -8.0, 0.0);
+    glVertex3f(5.0, 8.0, 0.0);
+    glVertex3f(-8.0, 8.0,0.0);
+    glVertex3f(-8.0, -8.0,0.0);
+    glEnd();
+
+    glColor4f(0.0, 1, 0, 1.0);
+    glPushMatrix();
+    Player(-8, -8, 0, movex1, movey1);
+    glPopMatrix();
+    glPushMatrix();
+    Player(5, 8, 0, movex2, movey2);
+    glPopMatrix();
+
+    glPushMatrix();
+    glColor4f(0.0, 0, 1, 1.0);
+    glTranslated(0.0,1,1);
+    glRotated(-90, 1.0, 0.0, 0.0);
+    glRotatef( xRotated,0, xRotated, 0);
+    glutSolidSphere(1, 30, 30);
+    glEnd();
+    glPopMatrix();
+
+    glPushMatrix();
+    Pyramid(0, -5, -12);
+    glEnd();
+    glPopMatrix();
+    glPushMatrix();
+    Pyramid(0, -45, -12);
+    glEnd();
+    glPopMatrix();
+
+    glPushMatrix();
+    Pyramid(0, -85, -12);
+    glEnd();
+    glPopMatrix();
+    glPushMatrix();
+    Pyramid(0, -125, -12);
+    glEnd();
+    glPopMatrix();
+
+        glPushMatrix ();
+       glTranslatef    (2, -6.0, 0.5);
+       glRotatef       (180.0, 1,0,0);
+       glRotatef       (zRotated, 0,0,1);
+       glutSolidCube(1);
+        glPopMatrix ();
+
+       glPushMatrix ();
+       glTranslatef    (2, 6.0, 0.5);
+       glRotatef       (180.0, 1,0,0);
+       glRotatef       (zRotated, 0,0,1);
+       glutSolidCube(1);
+        glPopMatrix ();
+
+        glPushMatrix ();
+        glTranslatef    (-6, 3-translateH, 1);
+        glRotatef       (90.0, 1,0,0);
+        glRotatef       (zRotated,0,1,0);
+
+        glPopMatrix ();
+
+        glutSwapBuffers();
+}
+
+void idleFunc (void)
+{
+    xRotated += 2;
+    yRotated += 0.5;
+    zRotated += 0.5;
+    translateP += 0.03;
+    translateH+=0.01;
+    glutPostRedisplay();
+}
+void keyboard(unsigned char Key,int x, int y){
+switch(Key){
+    case 'd':
+        movex1++;
+        break;
+    case 'a' :
+        movex1--;
+        break;
+    case 'w' :
+        movey1++;
+        break;
+
+    case 's' :
+        movey1--;
+        break;
+}
+}
+void keyboard2(int Key,int x, int y){
+    std::cout << Key << ' ';
+switch(Key){
+    case 102:
+        movex2++;
+        break;
+    case 100 :
+        movex2--;
+        break;
+    case 101 : movey2++;
+        break;
+
+    case 103 : movey2--;
+        break;
+}
+}
+int main (int argc, char **argv)
+{
+    glutInit               (&argc, argv);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitWindowSize     (720, 1280);
+    glutInitWindowPosition (0, 0);
+    glutCreateWindow       ("20100806 20109088");
+
+    glClearColor (1.0, 1.0, 1.0, 1.0);
+
+
+    glutDisplayFunc (display);
+    glutReshapeFunc (reshapeFunc);
+    glutKeyboardFunc(keyboard);
+    glutSpecialFunc(keyboard2);
+    glutIdleFunc    (idleFunc);
+
+    glClearColor(0.5,0.5,0.5,0.5);
+
+    glutMainLoop();
+    return 0;
+
+
+}
